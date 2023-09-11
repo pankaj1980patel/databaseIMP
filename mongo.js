@@ -43,6 +43,19 @@ const createProduct = async (req, res, next) => {
 
 const getProducts = async (req, res, next) => {
   // Implement your logic for retrieving products here
+  const client = new MongoClient(url);
+  let products;
+  try {
+    await client.connect();
+    console.log("Connected to MongoDB");
+    const db = client.db();
+    products = await db.collection("products").find().toArray();
+  } catch (error) {
+    console.error("Error:", error);
+    return res.status(500).json({ message: "Could not retrieve data" });
+  }
+  client.close();
+  res.json(products);
 };
 
 exports.createProduct = createProduct;
